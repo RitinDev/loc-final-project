@@ -1,0 +1,44 @@
+[
+    {
+        "list_code": "10101",
+        "list_password": "qwerty",
+        "list_tasks": {
+            "task1": {
+                "task_made_by": "user1",
+                "task_description": "task1 description",
+                "task_completed": false
+            },
+            "task2": {
+                "task_made_by": "user2",
+                "task_description": "task2 description",
+                "task_completed": false
+            },
+            "task3": {
+                "task_made_by": "user3",
+                "task_description": "task3 description",
+                "task_completed": false
+            }
+        }
+    },
+    {
+        "list_code": "20202",
+        "list_password": "password123",
+        "list_tasks": {
+            "task1": {
+                "task_made_by": "user1",
+                "task_description": "task1 description",
+                "task_completed": true
+            },
+            "task2": {
+                "task_made_by": "user2",
+                "task_description": "task2 description",
+                "task_completed": false
+            }
+        }
+    },
+    {
+        "list_code": "hlmy7",
+        "list_password": "ub13j6",
+        "list_tasks": []
+    }
+]

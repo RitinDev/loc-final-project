@@ -46,6 +46,19 @@ const newList = () => {
     return list;
 }
 
+// Function to get a list by its code
+const getListByCode = (code) => {
+    // Go through the data and find the list with the given code
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].list_code === code) {
+            // Return the list if found
+            return data[i];
+        }
+    }
+    // Return null if the list is not found
+    return null;
+}
+
 // Function to get a list by its code and password
 const getListByCodeAndPassword = (code, password) => {
     // Go through the data and find the list with the given code and password

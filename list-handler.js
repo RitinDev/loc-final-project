@@ -31,10 +31,10 @@ const generateUniqueID = () => {
 // }
 
 // Function to create a new list and add it to the data
-const newList = (code, password) => {
+const newList = (password) => {
     // Create  a new list object
     const list = {
-        list_code: code,
+        list_code: generateUniqueID(),
         list_password: password,
         list_tasks: []
     };

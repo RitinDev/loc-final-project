@@ -154,11 +154,13 @@
             window.location.href = 'list-template.html?code=' + code + '&name=' + name;
             return false;
             ">
-                <div class="input-group mb-3">
+                <div class="mb-3 d-flex flex-column gap-2" style="width: 97.5%;">
                     <input type="text" class="form-control" placeholder="Your Name (as Displayed on the To-Do List)"
-                        aria-label="Recipient's username" aria-describedby="basic-addon2" style="text-align: center">
+                        aria-label="Recipient's username" aria-describedby="basic-addon2" style="text-align: center" id="name-input">
+                        <input type="password" class="form-control" placeholder="Password"
+                        aria-label="Recipient's username" aria-describedby="basic-addon2" style="text-align: center" id="password-input">
                 </div>
-                <button class="btn btn-sm btn-secondary w-50" style="font-size: 1.05rem;" type="submit">Create List</button>
+                <button class="btn btn-sm btn-secondary" style="font-size: 1.05rem; width: 97.5%" type="submit">Create List</button>
             </form>
             </div>
         </main>

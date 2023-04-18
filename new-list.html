@@ -2,7 +2,7 @@
 <html lang="en" class="h-100" data-bs-theme="auto">
 
 <head>
-    <script src="js/color-modes.js"></script>
+    <script src="list-handler.js" defer></script>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -149,8 +149,10 @@
             <!-- Form to get user's name -->
             <form class="d-inline-flex flex-column justify-content-center align-items-center" style="width: 58.5%" onsubmit="
             // Get user's name
-            const name = document.querySelector('input').value;
-            const code = Math.floor(Math.random() * 1000000);
+            const name = document.getElementById('name-input').value;
+            const password = document.getElementById('password-input').value;
+            // Generate random code
+            const code = generateUniqueID();
             window.location.href = 'list-template.html?code=' + code + '&name=' + name;
             return false;
             ">

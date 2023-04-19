@@ -11,10 +11,6 @@ app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(express.static(__dirname)); // Serve static files from the current directory
 
-app.get('/new-list.html', (req, res) => {
-    res.sendFile(__dirname + '/new-list.html');
-});
-
 app.post('/new-list.html', (req, res) => {
     fs.readFile('lists.json', (err, data) => {
         if (err) throw err;
@@ -22,7 +18,7 @@ app.post('/new-list.html', (req, res) => {
         // Get data from form in new-list.html
         const name = req.body.name;
         const password = req.body.password;
-        
+
         // Get the data from lists.json
         const lists = JSON.parse(data);
 
@@ -37,7 +33,8 @@ app.post('/new-list.html', (req, res) => {
 
         fs.writeFile('lists.json', JSON.stringify(lists), (err) => {
             if (err) throw err;
-            res.send('List added successfully.');
+            // If all goes well, respond with the new list's ID and the name of the user
+            res.send({ id: id, name: name });
         });
     });
 });

@@ -139,9 +139,19 @@
                 },
                 body: JSON.stringify(data)
             };
-            fetch('/new-list.html', options);
-            "
+            fetch('/new-list.html', options).then(response => {
+                if (response.ok) {
+                    // Get the name and ID of the list from the response
+                    response.json().then(data => {
+                        // Navigate to the list page
+                        window.location.href = 'list-template.html?name=' + data.name + '&code=' + data.id;
+                    });
+                } else {
+                    console.log('Error!');
+                }
+            });
             return false;
+            "
             >
                 <div class="mb-3 d-flex flex-column gap-2" style="width: 97.5%;">
                     <input type="text" class="form-control" placeholder="Your Name (as Displayed on the To-Do List)"

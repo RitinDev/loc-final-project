@@ -39,6 +39,28 @@ app.post('/new-list.html', (req, res) => {
     });
 });
 
+app.post('/list-template.html', (req, res) => {
+    const code = req.body.code;
+    
+    fs.readFile('lists.json', (err, data) => {
+        if (err) throw err;
+
+        // Get the data from lists.json
+        const lists = JSON.parse(data);
+
+        // Get the list with the given code
+        const list = listHandler.getListByCode(lists, code);
+
+        // If the list is found, respond with the list
+        if (list) {
+            res.send(list);
+        } else {
+            // If the list is not found, respond with an error message
+            res.send({ error: 'List not found.' });
+        }
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}.`);
 });

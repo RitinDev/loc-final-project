@@ -62,6 +62,31 @@ app.post('/new-list.html', (req, res) => {
     });
 });
 
+app.post('/existing-list-getusername.html', (req, res) => {
+    fs.readFile('lists.json', (err, data) => {
+        if (err) throw err;
+
+        // Get data from form in new-list.html
+        const name = req.body.name;
+        const code = req.body.code;
+        const password = req.body.password;
+
+        // Get the data from lists.json
+        const lists = JSON.parse(data);
+
+        // Get the list with the given code and password
+        const list = listHandler.getListByCodeAndPassword(lists, code, password);
+
+        // If list is found, return a JSON object with list code and user's name
+        if (list) {
+            res.send({ id: code, name: name });
+        } else {
+            // If list is not found, return an error message
+            res.status(400).send({ error: 'List not found.' });
+        }
+    });
+});
+
 app.post('/list-template.html', (req, res) => {
     const code = req.body.code;
 

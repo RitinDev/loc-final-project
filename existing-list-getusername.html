@@ -134,9 +134,35 @@
             <div>
             <!-- Form to get user's name -->
             <form class="d-inline-flex flex-column justify-content-center align-items-center" style="width: 58.5%" onsubmit="
-            // Get user's name
-            const name = document.querySelector('input').value;
-            window.location.href = 'list-template.html?code=' + code + '&name=' + name;
+            // Get user's name and list password from the form
+            const name = document.getElementById('name-input').value;
+            const password = document.getElementById('password-input').value;
+
+            // Send a POST request to the server to get the list
+            const data = {
+                name: name,
+                code: code,
+                password: password
+            }
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }
+            fetch('/existing-list-getusername.html', options).then(response => {
+                if (response.ok) {
+                    // Get the code and name from the response
+                    response.json().then(data => {
+                        // Navigate to the list page
+                        window.location.href = 'list-template.html?name=' + data.name + '&code=' + data.id;
+                    });
+                } else {
+                    alert('Invalid password');
+                }
+            });
+            
             return false;
             ">
             <div class="mb-3 d-flex flex-column gap-2" style="width: 97.5%;">

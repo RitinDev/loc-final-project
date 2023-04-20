@@ -11,6 +11,29 @@ app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(express.static(__dirname)); // Serve static files from the current directory
 
+app.post('/', (req, res) => {
+    // Get code from form in index.html
+    const code = req.body.code;
+
+    fs.readFile('lists.json', (err, data) => {
+        if (err) throw err;
+
+        // Get the data from lists.json
+        const lists = JSON.parse(data);
+
+        // Get the list with the given code
+        const list = listHandler.getListByCode(lists, code);
+
+        // If the list is found, respond with the list
+        if (list) {
+            res.send(list);
+        } else {
+            // If the list is not found, respond with an error message
+            res.status(400).send({ error: 'List not found.' });
+        }
+    });
+});
+
 app.post('/new-list.html', (req, res) => {
     fs.readFile('lists.json', (err, data) => {
         if (err) throw err;
@@ -41,7 +64,7 @@ app.post('/new-list.html', (req, res) => {
 
 app.post('/list-template.html', (req, res) => {
     const code = req.body.code;
-    
+
     fs.readFile('lists.json', (err, data) => {
         if (err) throw err;
 

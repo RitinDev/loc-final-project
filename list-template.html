@@ -8,14 +8,16 @@
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.111.3">
     <title>Cover Template · Bootstrap v5.3</title>
+    <script src="list-handler.js"></script>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
 
     <script>
         // Get code and name from URL
         const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
         const name = urlParams.get('name');
+        const code = urlParams.get('code');
+        let list = {};
         // Create a POST request using fetch to get the list
         const params = { code: code };
         const options = {
@@ -30,9 +32,9 @@
             fetch('/list-template.html', options)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
+                    list = data;
                 });
-        }, 1000);
+        }, 500);
     </script>
 
     <link href="css/bootstrap.min.css" rel="stylesheet"
@@ -161,6 +163,10 @@
                 // Display code and name as bootstrap buttons
                 document.write('<h1 class="display-5">Welcome ' + name + '!</h1>');
                 document.write('<p class="lead">List Code: ' + code + '</p>');
+
+                setTimeout(()=>{
+                    displayList(list);
+                }, 1000)
             </script>
             
             <!-- Create a Bootstrap table with the following columns: Username in a colored block, Description, Button to mark as done or not -->
@@ -191,12 +197,19 @@
                 </tbody>
             </table> -->
             <!-- Add a button to add a new element to the list -->
-            <form onsubmit="return false;">
+            <form onsubmit="
+            const taskMaker = urlParams.get('name'); // For some reason, name was not working
+            let description = document.getElementById('description').value;
+            const newTask = createTask(taskMaker, description)
+            console.log(list, newTask)
+            addTask(list, newTask);
+            return false;
+            ">
                 <label for="description" class="form-label">Add New Event</label>
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" id="description" placeholder="Event Description"
                         style="text-align: center;">
-                    <button type="submit" class="btn btn-secondary">Add</button>
+                    <button type="submit" id="add-event-button" class="btn btn-secondary">Add</button>
                 </div>
             </form>
         </main>

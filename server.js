@@ -109,6 +109,38 @@ app.post('/list-template.html', (req, res) => {
     });
 });
 
+app.post('/add-task', (req, res) => {
+    // Req includes list and the task to be added
+    const list = req.body.list;
+    const task = req.body.task;
+
+    // Open the lists.json file for reading and writing
+    fs.readFile('lists.json', (err, data) => {
+        if (err) throw err;
+
+        // Get the data from lists.json
+        const lists = JSON.parse(data);
+
+        // Get the list with the given code
+        const listToUpdate = listHandler.getListByCode(lists, list.list_code);
+
+        // If the list is found, add the task to the list
+        if (listToUpdate) {
+            listToUpdate.list_tasks.push(task);
+            // Update the list in the lists.json file
+            fs.writeFile('lists.json', JSON.stringify(lists), (err) => {
+                if (err) throw err;
+
+                // If all goes well, respond with the updated list
+                res.send(listToUpdate);
+            });
+        } else {
+            // If the list is not found, respond with an error message
+            res.status(400).send({ error: 'List not found.' });
+        }
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}.`);
 });

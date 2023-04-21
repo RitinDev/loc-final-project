@@ -50,7 +50,7 @@ const getListByCodeAndPassword = (lists, code, password) => {
     return null;
 }
 
-const bootstrapBadgeTypes = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
+const bootstrapBadgeTypes = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark'];
 
 // Function to get a random bootstrap badge type
 const getRandomBootstrapBadgeType = () => {
@@ -111,42 +111,59 @@ const displayList = (list) => {
     document.querySelector('main').appendChild(table);
 }
 
+// Function to make a new list task
+const createTask = (madeBy, description) => {
+    // Create a new task object
+    const task = {
+        task_made_by: madeBy,
+        task_description: description,
+        task_completed: false
+    };
+    return task;
+}
+
 // Function to add a task to a list
 const addTask = (list, task) => {
-    // Add the task to the list
-    list.list_tasks.push(task);
-    // Write the new data to the JSON file
-    fs.writeFileSync('./lists.json', JSON.stringify(data));
-    // Reflect the changes in the DOM
-    const table = document.querySelector('table');
-    const tbody = table.querySelector('tbody');
-    const tr = document.createElement('tr');
-    const td1 = document.createElement('td');
-    const span = document.createElement('span');
-    span.classList.add('badge', `bg-${getRandomBootstrapBadgeType()}`);
-    span.textContent = task.task_made_by;
-    td1.appendChild(span);
-    const td2 = document.createElement('td');
-    td2.textContent = task.task_description;
-    const td3 = document.createElement('td');
-    const button = document.createElement('button');
-    button.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
-    button.setAttribute('type', 'button');
-    button.textContent = 'Mark as Done';
-    // Add an event listener to the button to remove the task from the list when clicked on it
-    button.addEventListener('click', () => {
-        // Remove the task from the list
-        list.list_tasks.splice(list.list_tasks.indexOf(task), 1);
-        // Write the new data to the JSON file
-        fs.writeFileSync('./lists.json', JSON.stringify(data));
-        // Reflect the changes in the DOM
-        tr.remove();
+    // Create a POST request to /add-task to add the task to the list
+    fetch('/add-task', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            list: list,
+            task: task
+        })
+    }).then((response) => {
+        response.json().then((data) => {
+            if (data.error) {
+                console.log(data.error);
+            } else {
+                // If the task was added successfully, reflect the changes in the DOM
+                const table = document.querySelector('table');
+                const tbody = table.querySelector('tbody');
+                const tr = document.createElement('tr');
+                const td1 = document.createElement('td');
+                const span = document.createElement('span');
+                span.classList.add('badge', `bg-${getRandomBootstrapBadgeType()}`);
+                span.textContent = task.task_made_by;
+                td1.appendChild(span);
+                const td2 = document.createElement('td');
+                td2.textContent = task.task_description;
+                const td3 = document.createElement('td');
+                const button = document.createElement('button');
+                button.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
+                button.setAttribute('type', 'button');
+                button.textContent = 'Mark as Done';
+                // TODO: Add an event listener to the button to remove the task from the list when clicked on it
+                td3.appendChild(button);
+                tr.appendChild(td1);
+                tr.appendChild(td2);
+                tr.appendChild(td3);
+                tbody.appendChild(tr);
+            }
+        });
     });
-    td3.appendChild(button);
-    tr.appendChild(td1);
-    tr.appendChild(td2);
-    tr.appendChild(td3);
-    tbody.appendChild(tr);
 }
 
 // Export the functions
@@ -156,5 +173,6 @@ module.exports = {
     getListByCodeAndPassword,
     newList,
     displayList,
+    createTask,
     addTask
 };

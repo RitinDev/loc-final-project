@@ -100,6 +100,29 @@ const displayList = (list) => {
         button.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
         button.setAttribute('type', 'button');
         button.textContent = 'Mark as Done';
+        // Add an event listener to the button to remove the task from the list when clicked on it
+        button.addEventListener('click', () => {
+            // Create a POST request to /remove-task to remove the task from the list
+            fetch('/remove-task', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    list: list,
+                    task: task
+                })
+            }).then((response) => {
+                response.json().then((data) => {
+                    if (data.error) {
+                        console.log(data.error);
+                    } else {
+                        // If the task was removed successfully, reflect the changes in the DOM
+                        tr.remove();
+                    }
+                });
+            });
+        });
         td3.appendChild(button);
         tr.appendChild(td1);
         tr.appendChild(td2);
@@ -155,7 +178,29 @@ const addTask = (list, task) => {
                 button.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
                 button.setAttribute('type', 'button');
                 button.textContent = 'Mark as Done';
-                // TODO: Add an event listener to the button to remove the task from the list when clicked on it
+                // Add an event listener to the button to remove the task from the list when clicked on it
+                button.addEventListener('click', () => {
+                    // Create a POST request to /remove-task to remove the task from the list
+                    fetch('/remove-task', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            list: list,
+                            task: task
+                        })
+                    }).then((response) => {
+                        response.json().then((data) => {
+                            if (data.error) {
+                                console.log(data.error);
+                            } else {
+                                // If the task was removed successfully, reflect the changes in the DOM
+                                tr.remove();
+                            }
+                        });
+                    });
+                });
                 td3.appendChild(button);
                 tr.appendChild(td1);
                 tr.appendChild(td2);

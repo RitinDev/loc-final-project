@@ -44,6 +44,22 @@
     {
         "list_code": "hlmy7",
         "list_password": "ub13j6",
-        "list_tasks": []
+        "list_tasks": [
+            {
+                "task_made_by": "abcd",
+                "task_description": "Pet the Cat",
+                "task_completed": false
+            },
+            {
+                "task_made_by": "dev-test-check",
+                "task_description": "Pet abcd's Cat",
+                "task_completed": false
+            },
+            {
+                "task_made_by": "dev-test-check",
+                "task_description": "Again",
+                "task_completed": false
+            }
+        ]
     }
 ]

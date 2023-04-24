@@ -161,14 +161,26 @@
         <main class="px-3">
             <script>
                 // Display code and name as bootstrap buttons
-                document.write('<h1 class="display-5">Welcome ' + name + '!</h1>');
-                document.write('<p class="lead">List Code: ' + code + '</p>');
+                document.write('<h1 class="display-6">Welcome ' + name + '!</h1>');
+                document.write(`<p class="lead">List Code: 
+                <span id="copy-code" 
+                style="text-decoration:underline; text-decoration-style: dotted; cursor: pointer"
+                onclick="
+                // Copy code to clipboard
+                navigator.clipboard.writeText(code);
+                // Change text to copied for 1 second
+                document.getElementById('copy-code').innerHTML = 'Copied!';
+                setTimeout(() => {
+                    document.getElementById('copy-code').innerHTML = code;
+                }, 1000);
+                "
+                >` + code + `</span></p>`);
 
-                setTimeout(()=>{
+                setTimeout(() => {
                     displayList(list);
                 }, 1000)
             </script>
-            
+
             <!-- Create a Bootstrap table with the following columns: Username in a colored block, Description, Button to mark as done or not -->
             <!-- <table class="table table-striped table-dark table-hover">
                 <thead>

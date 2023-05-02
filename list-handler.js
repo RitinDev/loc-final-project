@@ -149,30 +149,36 @@ const displayList = (list) => {
                 list: list
             })
         }).then((response) => {
-            response.json().then((data) => {
-                if (data.error) {
-                    // Turn the button into a danger button if there was an error
-                    exportButton.classList.remove('btn-outline-secondary');
-                    exportButton.classList.add('btn-outline-danger');
-                    exportButton.textContent = 'Error Exporting Tasks';
-                    console.log(data.error);
-                    setTimeout(() => {
-                        exportButton.classList.remove('btn-outline-success');
-                        exportButton.classList.add('btn-outline-secondary');
-                        exportButton.textContent = 'Export to CSV';
-                    } , 2000);
-                } else {
-                    // If the list was exported successfully, turn the button into a success button for 2 seconds
-                    exportButton.classList.remove('btn-outline-secondary');
-                    exportButton.classList.add('btn-outline-success');
-                    exportButton.textContent = 'Tasks Exported Successfully!';
-                    setTimeout(() => {
-                        exportButton.classList.remove('btn-outline-success');
-                        exportButton.classList.add('btn-outline-secondary');
-                        exportButton.textContent = 'Export to CSV';
-                    } , 2000);
-                }
+            response.blob().then((blob) => {
+                // Create a download link for the blob object
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.download = 'list-10101.csv';
+
+                // Trigger a click event on the download link to initiate the download
+                downloadLink.click();
+
+                // If the list was exported successfully, turn the button into a success button for 2 seconds
+                exportButton.classList.remove('btn-outline-secondary');
+                exportButton.classList.add('btn-outline-success');
+                exportButton.textContent = 'Tasks Exported Successfully!';
+                setTimeout(() => {
+                    exportButton.classList.remove('btn-outline-success');
+                    exportButton.classList.add('btn-outline-secondary');
+                    exportButton.textContent = 'Export to CSV';
+                }, 2000);
             });
+        }).catch((error) => {
+            console.log(error);
+            // If there was an error exporting the list, turn the button into a danger button for 2 seconds
+            exportButton.classList.remove('btn-outline-secondary');
+            exportButton.classList.add('btn-outline-danger');
+            exportButton.textContent = 'Error Exporting Tasks';
+            setTimeout(() => {
+                exportButton.classList.remove('btn-outline-danger');
+                exportButton.classList.add('btn-outline-secondary');
+                exportButton.textContent = 'Export to CSV';
+            }, 2000);
         });
     });
     // Append the button to the main element

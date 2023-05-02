@@ -193,23 +193,12 @@ app.post('/export-to-csv', (req, res) => {
         // Get the list with the given code
         const listToExport = listHandler.getListByCode(lists, list.list_code);
         
-        // If the list is found, parse the list's tasks JSON into CSV format and download it
         if (listToExport) {
             // Parse the list's tasks JSON into CSV format
             const csvData = Papa.unparse(listToExport.list_tasks);
-            // Get the output path for our CSV file
-            // In this case, we want to save it in the user's Downloads folder
-            const outputPath = path.join(os.homedir(), 'Downloads', `list-${listToExport.list_code}.csv`);
-            // Write the CSV data to the output path
-            fs.writeFile(outputPath, csvData, (err) => {
-                if (err) {
-                    res.status(400).send({ error: 'Error exporting list.' });
-                    throw err;
-                }
 
-                // If all goes well, respond with a success message
-                res.send({ success: 'List exported successfully.' });
-            });
+            res.attachment(`list-${listToExport.list_code}.csv`);
+            res.status(200).send(csvData);
         } else {
             // If the list is not found, respond with an error message
             res.status(400).send({ error: 'List not found.' });

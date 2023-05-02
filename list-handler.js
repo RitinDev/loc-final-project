@@ -132,6 +132,51 @@ const displayList = (list) => {
     table.appendChild(tbody);
     // Append the table to the main element
     document.querySelector('main').appendChild(table);
+    // Display a button at the bottom right of the table to export to CSV
+    const exportButton = document.createElement('button');
+    exportButton.classList.add('btn', 'btn-outline-secondary', 'mt-1', 'float-end');
+    exportButton.setAttribute('type', 'button');
+    exportButton.textContent = 'Export to CSV';
+    // Add an event listener to the button to export the list to CSV when clicked on it
+    exportButton.addEventListener('click', () => {
+        // Create a POST request to /export-to-csv to export the list to CSV
+        fetch('/export-to-csv', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                list: list
+            })
+        }).then((response) => {
+            response.json().then((data) => {
+                if (data.error) {
+                    // Turn the button into a danger button if there was an error
+                    exportButton.classList.remove('btn-outline-secondary');
+                    exportButton.classList.add('btn-outline-danger');
+                    exportButton.textContent = 'Error Exporting Tasks';
+                    console.log(data.error);
+                    setTimeout(() => {
+                        exportButton.classList.remove('btn-outline-success');
+                        exportButton.classList.add('btn-outline-secondary');
+                        exportButton.textContent = 'Export to CSV';
+                    } , 2000);
+                } else {
+                    // If the list was exported successfully, turn the button into a success button for 2 seconds
+                    exportButton.classList.remove('btn-outline-secondary');
+                    exportButton.classList.add('btn-outline-success');
+                    exportButton.textContent = 'Tasks Exported Successfully!';
+                    setTimeout(() => {
+                        exportButton.classList.remove('btn-outline-success');
+                        exportButton.classList.add('btn-outline-secondary');
+                        exportButton.textContent = 'Export to CSV';
+                    } , 2000);
+                }
+            });
+        });
+    });
+    // Append the button to the main element
+    document.querySelector('main').appendChild(exportButton);
 }
 
 // Function to make a new list task

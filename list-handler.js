@@ -95,6 +95,14 @@ const displayList = (list) => {
         td1.appendChild(span);
         const td2 = document.createElement('td');
         td2.textContent = task.task_description;
+        // Add the required attributes for Bootstrap tooltips to the td2 element
+        td2.setAttribute('data-bs-toggle', 'tooltip');
+        td2.setAttribute('data-bs-placement', 'top');
+        // Check if the task has a "date added" property
+        if (task.task_date_added) {
+            td2.setAttribute('data-bs-title', `${task.task_date_added}`);
+            bootstrap.Tooltip.getOrCreateInstance(td2);
+        }
         const td3 = document.createElement('td');
         const button = document.createElement('button');
         button.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
@@ -185,13 +193,39 @@ const displayList = (list) => {
     document.querySelector('main').appendChild(exportButton);
 }
 
+// Function to get the current date and time in the user's timezone
+// Displayed in the tooltip of each task
+// Date and time format inspired by Reddit's date and time format
+function getCurrentDateTime() {
+    // Get the user's current timezone
+    let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  
+    // Get the current date and time in the user's timezone
+    let now = new Date().toLocaleString("en-US", {timeZone: timeZone});
+  
+    // Format the date and time
+    let options = {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: true,
+      timeZoneName: "long"
+    };
+    return new Date(now).toLocaleString("en-US", options);
+  } 
+
 // Function to make a new list task
 const createTask = (madeBy, description) => {
     // Create a new task object
     const task = {
         task_made_by: madeBy,
         task_description: description,
-        task_completed: false
+        task_completed: false,
+        task_date_added: getCurrentDateTime()
     };
     return task;
 }
@@ -224,6 +258,14 @@ const addTask = (list, task) => {
                 td1.appendChild(span);
                 const td2 = document.createElement('td');
                 td2.textContent = task.task_description;
+                // Add the required attributes for Bootstrap tooltips to the td2 element
+                td2.setAttribute('data-bs-toggle', 'tooltip');
+                td2.setAttribute('data-bs-placement', 'top');
+                // Check if the task has a "date added" property
+                if (task.task_date_added) {
+                    td2.setAttribute('data-bs-title', `${task.task_date_added}`);
+                    bootstrap.Tooltip.getOrCreateInstance(td2);
+                }
                 const td3 = document.createElement('td');
                 const button = document.createElement('button');
                 button.classList.add('btn', 'btn-sm', 'btn-outline-secondary');

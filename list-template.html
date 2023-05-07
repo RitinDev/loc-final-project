@@ -4,13 +4,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.111.3">
-    <title>Cover Template · Bootstrap v5.3</title>
+    <meta name="description" content="To-Do Together | A simple, shared to-do list made with Bootstrap and Node.js">
+    <meta name="author" content="Ritin Malhotra">
+    <meta name="generator" content="To-Do Together">
+    <title>To-Do Together</title>
     <script src="list-handler.js"></script>
-
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
+    <script src="js/bootstrap.bundle.min.js" defer></script>
 
     <script>
         // Get code and name from URL
@@ -127,15 +126,13 @@
         input[type='text'] {
             background-color: #212529;
             color: whitesmoke;
-            border: 1px solid lightgrey;
-            border-radius: 0.25rem;
+            border: 1px solid grey;
         }
 
         input[type='text']:focus {
             background-color: #212529;
             color: whitesmoke;
-            border: 1px solid #212529;
-            border-radius: 0.25rem;
+            border: 1px solid whitesmoke;
         }
     </style>
 
@@ -177,38 +174,10 @@
                 >` + code + `</span></p>`);
 
                 setTimeout(() => {
-                    displayList(list);
+                    displayList(list); // Display table to tasks
                 }, 1000)
             </script>
 
-            <!-- Create a Bootstrap table with the following columns: Username in a colored block, Description, Button to mark as done or not -->
-            <!-- <table class="table table-striped table-dark table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">Username</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Done</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="badge bg-primary">User 1</span></td>
-                        <td>Task 1</td>
-                        <td><button class="btn btn-sm btn-outline-secondary" type="button">Mark as Done</button></td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge bg-success">User 2</span></td>
-                        <td>Task 2</td>
-                        <td><button class="btn btn-sm btn-outline-secondary" type="button">Mark as Done</button></td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge bg-primary">User 1</span></td>
-                        <td>Task 3</td>
-                        <td><button class="btn btn-sm btn-outline-secondary" type="button">Mark as Done</button></td>
-                    </tr>
-                </tbody>
-            </table> -->
-            <!-- Add a button to add a new element to the list -->
             <form onsubmit="
             const taskMaker = urlParams.get('name'); // For some reason, name was not working
             let description = document.getElementById('description').value;

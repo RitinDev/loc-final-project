@@ -161,7 +161,7 @@ const displayList = (list) => {
                 // Create a download link for the blob object
                 const downloadLink = document.createElement('a');
                 downloadLink.href = URL.createObjectURL(blob);
-                downloadLink.download = 'list-10101.csv';
+                downloadLink.download = `${list.list_code}.csv`
 
                 // Trigger a click event on the download link to initiate the download
                 downloadLink.click();

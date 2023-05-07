@@ -2,8 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const Papa = require('papaparse');
-const os = require('os');
-const path = require('path');
 
 const app = express();
 const port = 3000; // Port to run the server on

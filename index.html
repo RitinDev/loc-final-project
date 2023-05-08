@@ -92,20 +92,30 @@
             z-index: 1500;
         }
 
-        input[type='text'], input[type='password'] {
+        input[type='text'],
+        input[type='password'] {
             background-color: #212529;
             color: whitesmoke;
             border: 1px solid grey;
         }
 
-        input[type='text']:focus, input[type='password']:focus {
+        input[type='text']:focus,
+        input[type='password']:focus {
             background-color: #212529;
             color: whitesmoke;
             border: 1px solid whitesmoke;
         }
 
-        input[type='text']::placeholder, input[type='password']::placeholder {
+        input[type='text']::placeholder,
+        input[type='password']::placeholder {
             color: grey;
+        }
+
+        /* Create a mobile query */
+        @media only screen and (max-width: 600px) {
+            #get-started {
+                margin-top: 2.5%;
+            }
         }
     </style>
 
@@ -119,14 +129,12 @@
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
         <header class="mb-auto">
             <div>
-                <h3 
-                class="float-md-start mb-0 icon-link-hover"
-                style="cursor: pointer;" 
-                onclick="
+                <h3 class="float-md-start mb-0 icon-link-hover" style="cursor: pointer;" onclick="
                 // Navigate to home page
                 window.location.href = 'index.html';
                 ">To-Do Together</h3>
-                <a href="new-list.html"><button class="btn btn-sm btn-outline-secondary float-md-end" type="button">Get Started</button></a>
+                <a href="new-list.html"><button class="btn btn-sm btn-outline-secondary float-md-end" id="get-started"
+                        type="button">Get Started</button></a>
             </div>
         </header>
         <!-- <header style="margin-top: 30%;"> -->
@@ -135,7 +143,8 @@
 
         <main class="px-3">
             <h1>To-Do Together</h1>
-            <p class="lead">To-Do Together is a shared to-do list. Get a code from your friends and enter it below to start
+            <p class="lead">To-Do Together is a shared to-do list. Get a code from your friends and enter it below to
+                start
                 working on tasks together!</p>
             <p class="lead">
                 <!-- <a href="#" class="btn btn-lg btn-light fw-bold border-white bg-white">Learn more</a> -->
@@ -174,7 +183,8 @@
             </form>
             <form class="d-flex justify-content-center">
                 <div class="input-group mb-3 w-50 d-flex justify-content-center">
-                    <a href="new-list.html"><button class="btn btn-secondary" type="button" id="button-addon1">Create New List</button></a>
+                    <a href="new-list.html"><button class="btn btn-secondary" type="button" id="button-addon1">Create
+                            New List</button></a>
                 </div>
             </form>
         </main>

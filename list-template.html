@@ -11,31 +11,6 @@
     <script src="list-handler.js"></script>
     <script src="js/bootstrap.bundle.min.js" defer></script>
 
-    <script>
-        // Get code and name from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const name = urlParams.get('name');
-        const code = urlParams.get('code');
-        let list = {};
-        // Create a POST request using fetch to get the list
-        const params = { code: code };
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(params)
-        };
-        setTimeout(() => {
-            fetch('/list-template.html', options)
-                .then(response => response.json())
-                .then(data => {
-                    list = data;
-                });
-        }, 500);
-    </script>
-
     <link href="css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 
@@ -134,6 +109,13 @@
             color: whitesmoke;
             border: 1px solid whitesmoke;
         }
+
+        /* Create a mobile query */
+        @media only screen and (max-width: 600px) {
+            #get-started {
+                margin-top: 2.5%;
+            }
+        }
     </style>
 
 
@@ -150,13 +132,41 @@
                 // Navigate to home page
                 window.location.href = 'index.html';
                 ">To-Do Together</h3>
-                <a href="new-list.html"><button class="btn btn-sm btn-outline-secondary float-md-end" type="button">Get
+                <a href="new-list.html"><button class="btn btn-sm btn-outline-secondary float-md-end" id="get-started"
+                        type="button">Get
                         Started</button></a>
             </div>
         </header>
 
         <main class="px-3">
             <script>
+                // Get code and name from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const name = urlParams.get('name');
+                const code = urlParams.get('code');
+                let list = {};
+
+                // Create a POST request using fetch to get the list
+                const params = { code: code };
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(params)
+                };
+
+                const getList = (async () => {
+                    try {
+                        const response = await fetch('/list-template.html', options);
+                        const data = await response.json();
+                        return data;
+                    } catch (error) {
+                        console.error(error);
+                    }
+                });
+
                 // Display code and name as bootstrap buttons
                 document.write('<h1 class="display-6">Welcome ' + name + '!</h1>');
                 document.write(`<p class="lead">List Code: 
@@ -172,10 +182,11 @@
                 }, 1000);
                 "
                 >` + code + `</span></p>`);
-
-                setTimeout(() => {
-                    displayList(list); // Display table to tasks
-                }, 1000)
+                // Call the function and handle the returned data
+                getList().then(data => {
+                    list = data;
+                    displayList(list);
+                });
             </script>
 
             <form onsubmit="
@@ -184,6 +195,8 @@
             const newTask = createTask(taskMaker, description)
             console.log(list, newTask)
             addTask(list, newTask);
+            // Clear input
+            document.getElementById('description').value = '';
             return false;
             ">
                 <label for="description" class="form-label">Add New Event</label>

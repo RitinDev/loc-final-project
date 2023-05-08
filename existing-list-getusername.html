@@ -91,20 +91,30 @@
             z-index: 1500;
         }
 
-        input[type='text'], input[type='password'] {
+        input[type='text'],
+        input[type='password'] {
             background-color: #212529;
             color: whitesmoke;
             border: 1px solid grey;
         }
 
-        input[type='text']:focus, input[type='password']:focus {
+        input[type='text']:focus,
+        input[type='password']:focus {
             background-color: #212529;
             color: whitesmoke;
             border: 1px solid whitesmoke;
         }
 
-        input[type='text']::placeholder, input[type='password']::placeholder {
+        input[type='text']::placeholder,
+        input[type='password']::placeholder {
             color: grey;
+        }
+
+        /* Create a mobile query */
+        @media only screen and (max-width: 600px) {
+            #get-started {
+                margin-top: 2.5%;
+            }
         }
     </style>
 
@@ -118,14 +128,12 @@
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
         <header class="mb-auto">
             <div>
-                <h3 
-                class="float-md-start mb-0 icon-link-hover"
-                style="cursor: pointer;" 
-                onclick="
+                <h3 class="float-md-start mb-0 icon-link-hover" style="cursor: pointer;" onclick="
                 // Navigate to home page
                 window.location.href = 'index.html';
                 ">To-Do Together</h3>
-                <a href="new-list.html"><button class="btn btn-sm btn-outline-secondary float-md-end" type="button">Get Started</button></a>
+                <a href="new-list.html"><button class="btn btn-sm btn-outline-secondary float-md-end" id="get-started" type="button">Get
+                        Started</button></a>
             </div>
         </header>
 
@@ -140,8 +148,9 @@
                 }
             </script>
             <div>
-            <!-- Form to get user's name -->
-            <form class="d-inline-flex flex-column justify-content-center align-items-center" style="width: 58.5%" onsubmit="
+                <!-- Form to get user's name -->
+                <form class="d-inline-flex flex-column justify-content-center align-items-center" style="width: 58.5%"
+                    onsubmit="
             // Get user's name and list password from the form
             const name = document.getElementById('name-input').value;
             const password = document.getElementById('password-input').value;
@@ -173,14 +182,16 @@
             
             return false;
             ">
-            <div class="mb-3 d-flex flex-column gap-2" style="width: 97.5%;">
-                <input type="text" class="form-control" placeholder="Your Name (as Displayed on the To-Do List)"
-                    aria-label="Recipient's username" aria-describedby="basic-addon2" style="text-align: center" id="name-input">
-                    <input type="password" class="form-control" placeholder="Password"
-                    aria-label="List Password" aria-describedby="basic-addon2" style="text-align: center" id="password-input">
-            </div>
-                <button class="btn btn-sm btn-secondary w-50" style="font-size: 1.05rem;" type="submit">Go to List</button>
-            </form>
+                    <div class="mb-3 d-flex flex-column gap-2" style="width: 97.5%;">
+                        <input type="text" class="form-control" placeholder="Your Name (as Displayed on the To-Do List)"
+                            aria-label="Recipient's username" aria-describedby="basic-addon2" style="text-align: center"
+                            id="name-input">
+                        <input type="password" class="form-control" placeholder="Password" aria-label="List Password"
+                            aria-describedby="basic-addon2" style="text-align: center" id="password-input">
+                    </div>
+                    <button class="btn btn-sm btn-secondary w-50" style="font-size: 1.05rem;" type="submit">Go to
+                        List</button>
+                </form>
             </div>
         </main>
 

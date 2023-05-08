@@ -1,7 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs');
-const Papa = require('papaparse');
 const mongoose = require('mongoose');
 const List = require('./models/list');
 const dotenv = require('dotenv').config();
@@ -34,98 +32,83 @@ app.post('/', (req, res) => {
     // Get code from form in index.html
     const code = req.body.code;
 
-    fs.readFile('lists.json', (err, data) => {
-        if (err) throw err;
-
-        // Get the data from lists.json
-        const lists = JSON.parse(data);
-
-        // Get the list with the given code
-        const list = listHandler.getListByCode(lists, code);
-
-        // If the list is found, respond with the list
-        if (list) {
-            res.send(list);
-        } else {
-            // If the list is not found, respond with an error message
-            res.status(400).send({ error: 'List not found.' });
-        }
-    });
+    // Get the list with the given code
+    List.findOne({ list_code: code })
+        .then(list => {
+            // If the list is found, log it to the console
+            if (list) {
+                res.status(200).send(list);
+            } else {
+                res.status(400).send({ error: 'List not found.' });
+            }
+        })
+        .catch(err => console.error(err));
 });
 
 app.post('/new-list.html', (req, res) => {
-    fs.readFile('lists.json', (err, data) => {
-        if (err) throw err;
+    // Get data from form in new-list.html
+    const name = req.body.name;
+    const password = req.body.password;
 
-        // Get data from form in new-list.html
-        const name = req.body.name;
-        const password = req.body.password;
+    // Get all lists from the database
+    List.find()
+        .then(lists => {
+            // Generate a unique ID for the new list
+            const id = listHandler.generateUniqueID(lists);
 
-        // Get the data from lists.json
-        const lists = JSON.parse(data);
+            // Generate a new list object
+            const list = listHandler.newList(id, password);
 
-        // Generate a unique ID for the new list
-        const id = listHandler.generateUniqueID(lists);
-
-        // Generate a new list object
-        const list = listHandler.newList(id, password);
-
-        // Add the new list to the data
-        lists.push(list);
-
-        fs.writeFile('lists.json', JSON.stringify(lists), (err) => {
-            if (err) throw err;
-            // If all goes well, respond with the new list's ID and the name of the user
-            res.send({ id: id, name: name });
+            // Add the new list to the database
+            List.replaceOne({ list_code: id }, list, { upsert: true })
+                .then(() => {
+                    // If all goes well, respond with the new list
+                    res.status(200).send({ id: id, name: name });
+                })
+                .catch(err => {
+                    console.error(err)
+                    res.status(400).send({ error: 'Error creating list.' });
+                });
+        })
+        .catch(err => {
+            console.error(err)
+            res.status(400).send({ error: 'Error creating list.' });
         });
-    });
 });
 
 app.post('/existing-list-getusername.html', (req, res) => {
-    fs.readFile('lists.json', (err, data) => {
-        if (err) throw err;
+    // Get data from form
+    const name = req.body.name;
+    const code = req.body.code;
+    const password = req.body.password;
 
-        // Get data from form in new-list.html
-        const name = req.body.name;
-        const code = req.body.code;
-        const password = req.body.password;
-
-        // Get the data from lists.json
-        const lists = JSON.parse(data);
-
-        // Get the list with the given code and password
-        const list = listHandler.getListByCodeAndPassword(lists, code, password);
-
-        // If list is found, return a JSON object with list code and user's name
-        if (list) {
-            res.send({ id: code, name: name });
-        } else {
-            // If list is not found, return an error message
-            res.status(400).send({ error: 'List not found.' });
-        }
-    });
+    // Get the list with the given code and password
+    List.findOne({ list_code: code, list_password: password })
+        .then(list => {
+            // If list is found, return a JSON object with list code and user's name
+            if (list) {
+                res.send({ id: code, name: name });
+            } else {
+                // If list is not found, return an error message
+                res.status(400).send({ error: 'List not found.' });
+            }
+        })
 });
 
 app.post('/list-template.html', (req, res) => {
     const code = req.body.code;
 
-    fs.readFile('lists.json', (err, data) => {
-        if (err) throw err;
-
-        // Get the data from lists.json
-        const lists = JSON.parse(data);
-
-        // Get the list with the given code
-        const list = listHandler.getListByCode(lists, code);
-
-        // If the list is found, respond with the list
-        if (list) {
-            res.send(list);
-        } else {
-            // If the list is not found, respond with an error message
-            res.send({ error: 'List not found.' });
-        }
-    });
+    // Get the list with the given code
+    List.findOne({ list_code: code })
+        .then(list => {
+            // If the list is found, respond with the list
+            if (list) {
+                res.status(200).send(list);
+            } else {
+                // If the list is not found, respond with an error message
+                res.status(400).send({ error: 'List not found.' });
+            }
+        })
 });
 
 app.post('/add-task', (req, res) => {
@@ -133,31 +116,28 @@ app.post('/add-task', (req, res) => {
     const list = req.body.list;
     const task = req.body.task;
 
-    // Open the lists.json file for reading and writing
-    fs.readFile('lists.json', (err, data) => {
-        if (err) throw err;
-
-        // Get the data from lists.json
-        const lists = JSON.parse(data);
-
-        // Get the list with the given code
-        const listToUpdate = listHandler.getListByCode(lists, list.list_code);
-
-        // If the list is found, add the task to the list
-        if (listToUpdate) {
-            listToUpdate.list_tasks.push(task);
-            // Update the list in the lists.json file
-            fs.writeFile('lists.json', JSON.stringify(lists), (err) => {
-                if (err) throw err;
-
-                // If all goes well, respond with the updated list
-                res.send(listToUpdate);
-            });
-        } else {
-            // If the list is not found, respond with an error message
-            res.status(400).send({ error: 'List not found.' });
-        }
-    });
+    // Get the list with the given code
+    List.findOne({ list_code: list.list_code })
+        .then(listToUpdate => {
+            // If the list is found, add the task to the list
+            if (listToUpdate) {
+                // Add the task to the list's list_tasks array
+                listToUpdate.list_tasks.push(task);
+                // Update the list in the database
+                List.replaceOne({ list_code: list.list_code }, listToUpdate, { upsert: true })
+                    .then(() => {
+                        // If all goes well, respond with the updated list
+                        res.status(200).send(listToUpdate);
+                    })
+                    .catch(err => {
+                        console.error(err)
+                        res.status(400).send({ error: 'Error adding task.' });
+                    });
+            } else {
+                // If the list is not found, respond with an error message
+                res.status(400).send({ error: 'List not found.' });
+            }
+        })
 });
 
 app.post('/remove-task', (req, res) => {
@@ -165,61 +145,57 @@ app.post('/remove-task', (req, res) => {
     const list = req.body.list;
     const task = req.body.task;
 
-    // Open the lists.json file for reading and writing
-    fs.readFile('lists.json', (err, data) => {
-        if (err) throw err;
-
-        // Get the data from lists.json
-        const lists = JSON.parse(data);
-
-        // Get the list with the given code
-        const listToUpdate = listHandler.getListByCode(lists, list.list_code);
-
-        // If the list is found, remove the task from the list
-        if (listToUpdate) {
-            listToUpdate.list_tasks = listToUpdate.list_tasks.filter((t) => {
-                // Remove the task if both the task's task_made_by and task_description match
-                return t.task_made_by !== task.task_made_by || t.task_description !== task.task_description;
-            });
-            // Update the list in the lists.json file
-            fs.writeFile('lists.json', JSON.stringify(lists), (err) => {
-                if (err) throw err;
-
-                // If all goes well, respond with the updated list
-                res.send(listToUpdate);
-            });
-        } else {
-            // If the list is not found, respond with an error message
-            res.status(400).send({ error: 'List not found.' });
-        }
-    });
+    // Get the list with the given code
+    List.findOne({ list_code: list.list_code })
+        .then(listToUpdate => {
+            // If the list is found, remove the task from the list
+            if (listToUpdate) {
+                // Remove the task from the list's list_tasks array
+                listToUpdate.list_tasks = listToUpdate.list_tasks.filter((t) => {
+                    // Remove the task if both the task's task_made_by and task_description match
+                    return t.task_made_by !== task.task_made_by || t.task_description !== task.task_description;
+                });
+                // Update the list in the database
+                List.replaceOne({ list_code: list.list_code }, listToUpdate, { upsert: true })
+                    .then(() => {
+                        // If all goes well, respond with the updated list
+                        res.status(200).send(listToUpdate);
+                    })
+                    .catch(err => {
+                        console.error(err)
+                        res.status(400).send({ error: 'Error removing task.' });
+                    });
+            } else {
+                // If the list is not found, respond with an error message
+                res.status(400).send({ error: 'List not found.' });
+            }
+        })
 });
 
 app.post('/export-to-csv', (req, res) => {
     // Req includes list
     const list = req.body.list;
 
-    // Open the lists.json file for reading and writing
-    fs.readFile('lists.json', (err, data) => {
-        if (err) throw err;
+    // Get the list with the given code
+    List.findOne({ list_code: list.list_code })
+        .then(listToExport => {
+            // If the list is found, parse the list's tasks JSON into CSV format
+            if (listToExport) {
+                // Get the list's tasks in plain JSON format
+                const tasks = listToExport.list_tasks;
+                // Go through each task and add it to the CSV string
+                let csvData = 'task_made_by,task_description,task_completed,task_date_added\n';
+                tasks.forEach((task) => {
+                    csvData += `"${task.task_made_by}","${task.task_description}",${task.task_completed},"${task.task_date_added}"\n`;
+                });
 
-        // Get the data from lists.json
-        const lists = JSON.parse(data);
-
-        // Get the list with the given code
-        const listToExport = listHandler.getListByCode(lists, list.list_code);
-
-        if (listToExport) {
-            // Parse the list's tasks JSON into CSV format
-            const csvData = Papa.unparse(listToExport.list_tasks);
-
-            res.attachment(`list-${listToExport.list_code}.csv`);
-            res.status(200).send(csvData);
-        } else {
-            // If the list is not found, respond with an error message
-            res.status(400).send({ error: 'List not found.' });
-        }
-    });
+                res.attachment(`list-${listToExport.list_code}.csv`);
+                res.status(200).send(csvData);
+            } else {
+                // If the list is not found, respond with an error message
+                res.status(400).send({ error: 'List not found.' });
+            }
+        })
 });
 
 app.listen(port, () => {

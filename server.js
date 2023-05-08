@@ -2,6 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const Papa = require('papaparse');
+const mongoose = require('mongoose');
+const List = require('./models/list');
+const dotenv = require('dotenv').config();
 
 const app = express();
 const port = 3000; // Port to run the server on
@@ -11,6 +14,21 @@ const listHandler = require('./list-handler');
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(express.static(__dirname)); // Serve static files from the current directory
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: 'to-do-together' // specify the name of the database here
+})
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Error connecting to MongoDB', err));
+
+// // find the first list in the database
+// console.log('Finding the first list in the database...');
+// List.findOne()
+//     .then(list => console.log(list))
+//     .catch(err => console.error(err));
 
 app.post('/', (req, res) => {
     // Get code from form in index.html
@@ -187,10 +205,10 @@ app.post('/export-to-csv', (req, res) => {
 
         // Get the data from lists.json
         const lists = JSON.parse(data);
-        
+
         // Get the list with the given code
         const listToExport = listHandler.getListByCode(lists, list.list_code);
-        
+
         if (listToExport) {
             // Parse the list's tasks JSON into CSV format
             const csvData = Papa.unparse(listToExport.list_tasks);

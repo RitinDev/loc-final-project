@@ -111,10 +111,22 @@
             color: grey;
         }
 
+        #input-icon {
+            position: absolute;
+            top: 11%;
+            right: 26.75%;
+            font-size: 112%;
+            color: grey;
+        }
+
         /* Create a mobile query */
         @media only screen and (max-width: 600px) {
             #get-started {
                 margin-top: 2.5%;
+            }
+
+            #input-icon {
+                display: none;
             }
         }
     </style>
@@ -147,44 +159,84 @@
                 start
                 working on tasks together!</p>
             <p class="lead">
-                <!-- <a href="#" class="btn btn-lg btn-light fw-bold border-white bg-white">Learn more</a> -->
-            <form class="d-flex justify-content-center" onsubmit="
-                // Get the code from the input
-                var code = document.querySelector('input').value;
 
-                // Send a POST request to the server with the code
-                const data = { code: code };
-                const options = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                };
-                fetch('/', options).then(response => {
-                    // If the code is valid, navigate to the list page
-                    if (response.ok) {
-                        response.json().then(data => {
-                            console.log(data);
-                            window.location.href = 'existing-list-getusername.html?code=' + data.list_code;
+                <script>
+                    const handleSubmit = (e) => {
+                        e.preventDefault();
+                        // Get the code from the input
+                        var code = document.querySelector('input').value;
+
+                        // Send a POST request to the server with the code
+                        const data = { code: code };
+                        const options = {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        };
+                        fetch('/', options).then(response => {
+                            // If the code is valid, navigate to the list page
+                            if (response.ok) {
+                                response.json().then(data => {
+                                    console.log(data);
+                                    window.location.href = 'existing-list-getusername.html?code=' + data.list_code;
+                                });
+                            }
+                            // If the code is invalid, show an error message
+                            else {
+                                document.getElementById('code-input-field').value = '';
+                                alert('Invalid code!');
+                            }
                         });
-                    }
-                    // If the code is invalid, show an error message
-                    else {
-                        alert('Invalid code!');
-                    }
-                });
+                    };
+                </script>
+            <form class="d-flex justify-content-center position-relative" id="existing-list-form" onsubmit="
+                handleSubmit(event);
                 return false;
             ">
                 <div class="input-group mb-3 w-50">
-                    <input type="text" class="form-control" placeholder="Your Code Here!"
+                    <input type="text" class="form-control" placeholder="Your Code Here!" id="code-input-field"
                         aria-label="Code for To-Do List" aria-describedby="basic-addon2" style="text-align: center;">
                 </div>
+                <i class="bi bi-box-arrow-in-right" id="input-icon"></i>
             </form>
             <form class="d-flex justify-content-center">
                 <div class="input-group mb-3 w-50 d-flex justify-content-center">
-                    <a href="new-list.html"><button class="btn btn-secondary" type="button" id="button-addon1">Create
+                    <a href="new-list.html"><button class="btn btn-secondary" type="button" id="new-list-button">Create
                             New List</button></a>
+                    <script>
+                        const codeInputField = document.getElementById('code-input-field');
+                        const newListButton = document.getElementById('new-list-button');
+                        let clickEventListenerAdded = false;
+
+                        // If the user enters some code, replace the "Create New List"
+                        // button with an "Enter List Code" button
+                        codeInputField.addEventListener('input', () => {
+                            if (codeInputField.value.length > 0) {
+                                // Change the text content of the button to "Enter List Code"
+                                newListButton.textContent = 'Enter List Code';
+
+                                // Add click event listener if not already added
+                                if (!clickEventListenerAdded) {
+                                    newListButton.addEventListener('click', (e) => {
+                                        handleSubmit(e);
+                                        codeInputField.value = '';
+                                    });
+                                    clickEventListenerAdded = true;
+                                }
+                            }
+                            else {
+                                // Change the text content of the button to "Create New List"
+                                newListButton.textContent = 'Create New List';
+                                // On click, navigate to the new list page
+                                newListButton.addEventListener('click', () => {
+                                    window.location.href = 'new-list.html';
+                                });
+                            }
+                        });
+                    </script>
+
                 </div>
             </form>
         </main>

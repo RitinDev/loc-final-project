@@ -127,6 +127,8 @@ const displayList = (list) => {
                     } else {
                         // If the task was removed successfully, reflect the changes in the DOM
                         tr.remove();
+                        // Update the list in the local storage
+                        updateListInLocalStorage(list);
                     }
                 });
             });
@@ -196,27 +198,27 @@ const displayList = (list) => {
 // Function to get the current date and time in the user's timezone
 // Displayed in the tooltip of each task
 // Date and time format inspired by Reddit's date and time format
-function getCurrentDateTime() {
+const getCurrentDateTime = () => {
     // Get the user's current timezone
     let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  
+
     // Get the current date and time in the user's timezone
-    let now = new Date().toLocaleString("en-US", {timeZone: timeZone});
-  
+    let now = new Date().toLocaleString("en-US", { timeZone: timeZone });
+
     // Format the date and time
     let options = {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
-      hour12: true,
-      timeZoneName: "long"
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: true,
+        timeZoneName: "long"
     };
     return new Date(now).toLocaleString("en-US", options);
-  } 
+}
 
 // Function to make a new list task
 const createTask = (madeBy, description) => {
@@ -290,10 +292,16 @@ const addTask = (list, task) => {
                             } else {
                                 // If the task was removed successfully, reflect the changes in the DOM
                                 tr.remove();
+                                // Update the list in localStorage
+                                updateListInLocalStorage(list);
                             }
                         });
                     });
                 });
+
+                // Update the list in localStorage
+                updateListInLocalStorage(list);
+
                 td3.appendChild(button);
                 tr.appendChild(td1);
                 tr.appendChild(td2);
@@ -304,6 +312,128 @@ const addTask = (list, task) => {
     });
 }
 
+// Function to get the current date and time in the DD/MM/YYYY HH:MM format
+// Used to display date modified in the list table
+const getDateTimeShort = () => {
+    // Get the user's current timezone
+    let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // Get the current date and time in the user's timezone
+    let now = new Date().toLocaleString("en-US", { timeZone: timeZone });
+
+    // Format the date and time
+    let options = {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true
+    };
+    return new Date(now).toLocaleString("en-US", options);
+}
+
+// Function to display the lists stored in localStorage
+// Used in the my-lists page
+const displayMyLists = () => {
+    // Get the lists from localStorage
+    let lists = JSON.parse(localStorage.getItem('myLists'));
+
+    // Sort the lists by date modified
+    let sortedLists = Object.values(lists).sort((a, b) => {
+        return new Date(b.date_modified) - new Date(a.date_modified);
+    });
+
+    // Get the main element
+    const main = document.querySelector('main');
+
+    // Create a table element
+    const table = document.createElement('table');
+    table.classList.add('table', 'table-hover', 'table-striped', 'table-dark');
+
+    // Create a thead element
+    const thead = document.createElement('thead');
+
+    // Create a tr element
+    const tr = document.createElement('tr');
+
+    // Create th elements for the list code, date modified and remove list button
+    ['List Code', 'Date Modified', 'Remove List'].forEach((text) => {
+        const th = document.createElement('th');
+        th.setAttribute('scope', 'col');
+        th.textContent = text;
+        tr.appendChild(th);
+    });
+
+    // Append the tr element to the thead element
+    thead.appendChild(tr);
+
+    // Append the thead element to the table element
+    table.appendChild(thead);
+
+    // Create a tbody element
+    const tbody = document.createElement('tbody');
+
+    // Loop through the sorted lists
+    sortedLists.forEach((list) => {
+        // Create a tr element
+        const tr = document.createElement('tr');
+
+        // Create td elements for the list code and date modified
+        [list.code, list.date_modified].forEach((text) => {
+            const td = document.createElement('td');
+            td.textContent = text;
+            tr.appendChild(td);
+        });
+
+        // Create td element for the remove list button
+        const td3 = document.createElement('td');
+        const button = document.createElement('button');
+        button.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
+        button.setAttribute('type', 'button');
+        button.textContent = 'Remove';
+
+        // Add an event listener to the button to remove the list when clicked on it
+        button.addEventListener('click', () => {
+            delete lists[list.code];
+            localStorage.setItem('myLists', JSON.stringify(lists));
+            tr.remove();
+        });
+
+        td3.appendChild(button);
+        tr.appendChild(td3);
+
+        // Append the tr element to the tbody element
+        tbody.appendChild(tr);
+    });
+
+    // Append the tbody element to the table element
+    table.appendChild(tbody);
+
+    // Append the table element to the main element
+    main.appendChild(table);
+};
+
+// Function to update a list's 'date_modified' property in localStorage
+// Used when a task is added or removed from a list
+const updateListInLocalStorage = (list) => {
+    // Check if the list already exists in localStorage
+    let myLists = JSON.parse(localStorage.getItem('myLists')) || {};
+    if (myLists[list.list_code]) {
+        // If the list exists, update its 'date_modified' property
+        myLists[list.list_code].date_modified = getDateTimeShort();
+    } else {
+        // If the list doesn't exist, create it and set its 'date_modified' property
+        myLists[list.list_code] = {
+            code: list.list_code,
+            date_modified: getDateTimeShort()
+        };
+    }
+    // Save myLists back to localStorage
+    localStorage.setItem('myLists', JSON.stringify(myLists));
+};
+
 // Export the functions
 module.exports = {
     generateUniqueID,
@@ -312,5 +442,7 @@ module.exports = {
     newList,
     displayList,
     createTask,
-    addTask
+    addTask,
+    getDateTimeShort,
+    updateListInLocalStorage,
 };

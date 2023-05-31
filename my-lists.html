@@ -8,6 +8,8 @@
     <meta name="author" content="Ritin Malhotra">
     <meta name="generator" content="To-Do Together">
     <title>To-Do Together</title>
+    <script src="list-handler.js"></script>
+
 
     <link href="css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
@@ -15,7 +17,6 @@
     <!-- Favicons -->
     <link rel="icon" href="img/card-checklist.svg">
     <meta name="theme-color" content="#712cf9">
-
 
     <style>
         .bd-placeholder-img {
@@ -90,32 +91,6 @@
         .bd-mode-toggle {
             z-index: 1500;
         }
-
-        input[type='text'],
-        input[type='password'] {
-            background-color: #212529;
-            color: whitesmoke;
-            border: 1px solid grey;
-        }
-
-        input[type='text']:focus,
-        input[type='password']:focus {
-            background-color: #212529;
-            color: whitesmoke;
-            border: 1px solid whitesmoke;
-        }
-
-        input[type='text']::placeholder,
-        input[type='password']::placeholder {
-            color: grey;
-        }
-
-        /* Create a mobile query */
-        @media only screen and (max-width: 600px) {
-            #get-started {
-                margin-top: 2.5%;
-            }
-        }
     </style>
 
 
@@ -126,7 +101,7 @@
 
 <body class="d-flex h-100 text-center text-bg-dark p-1">
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-        <header class="mb-auto">
+        <header class="mb-5">
             <div>
                 <h3 class="float-md-start mb-0 icon-link-hover" style="cursor: pointer;" onclick="
                 // Navigate to home page
@@ -138,63 +113,17 @@
                 </nav>
             </div>
         </header>
+        <!-- <header style="margin-top: 30%;"> -->
+
+        </header>
 
         <main class="px-3">
+            <h1>My Lists</h1>
+            <p class="lead text-white-50">Here are the lists you have created.</p>
             <script>
-                // Get code from URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const code = urlParams.get('code');
-                // If code is not null, display an h1 with the code in it
-                if (code != null) {
-                    document.write('<h1 class="mb-3">Edit List #' + code + '</h1>');
-                }
+                // Display the lists stored in localStoage
+                displayMyLists();
             </script>
-            <div>
-                <!-- Form to get user's name -->
-                <form class="d-inline-flex flex-column justify-content-center align-items-center" style="width: 58.5%"
-                    onsubmit="
-            // Get user's name and list password from the form
-            const name = document.getElementById('name-input').value;
-            const password = document.getElementById('password-input').value;
-
-            // Send a POST request to the server to get the list
-            const data = {
-                name: name,
-                code: code,
-                password: password
-            }
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            }
-            fetch('/existing-list-getusername.html', options).then(response => {
-                if (response.ok) {
-                    // Get the code and name from the response
-                    response.json().then(data => {
-                        // Navigate to the list page
-                        window.location.href = 'list-template.html?name=' + data.name + '&code=' + data.id;
-                    });
-                } else {
-                    alert('Invalid password');
-                }
-            });
-            
-            return false;
-            ">
-                    <div class="mb-3 d-flex flex-column gap-2" style="width: 97.5%;">
-                        <input type="text" class="form-control" placeholder="Your Name (as Displayed on the To-Do List)"
-                            aria-label="Recipient's username" aria-describedby="basic-addon2" style="text-align: center"
-                            id="name-input">
-                        <input type="password" class="form-control" placeholder="Password" aria-label="List Password"
-                            aria-describedby="basic-addon2" style="text-align: center" id="password-input">
-                    </div>
-                    <button class="btn btn-sm btn-secondary w-50" style="font-size: 1.05rem;" type="submit">Go to
-                        List</button>
-                </form>
-            </div>
         </main>
 
         <footer class="mt-auto text-white-50">

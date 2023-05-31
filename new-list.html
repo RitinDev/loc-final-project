@@ -132,8 +132,10 @@
                 // Navigate to home page
                 window.location.href = 'index.html';
                 ">To-Do Together</h3>
-                <a href="new-list.html"><button class="btn btn-sm btn-outline-secondary float-md-end" id="get-started"
-                        type="button">Get Started</button></a>
+                <nav class="nav nav-masthead justify-content-center float-md-end">
+                    <a class="nav-link icon-link-hover" href="new-list.html">New List</a>
+                    <a class="nav-link icon-link-hover" href="my-lists.html">My Lists</a>
+                </nav>
             </div>
         </header>
 
@@ -159,6 +161,20 @@
                 if (response.ok) {
                     // Get the name and ID of the list from the response
                     response.json().then(data => {
+                       // Create an entry for the new list in localStorage
+                       // If myLists doesn't exist, create it
+                       if (!localStorage.getItem('myLists')) {
+                           localStorage.setItem('myLists', JSON.stringify({}));
+                       }
+                       // Add the new list to myLists
+                       let lists = JSON.parse(localStorage.getItem('myLists'));
+                       // Create a new object to store in the lists
+                       let newList = {
+                           'code': data.id,
+                           'date_modified': data.dateTime
+                       };
+                       lists[data.id] = newList;
+                       localStorage.setItem('myLists', JSON.stringify(lists));
                         // Navigate to the list page
                         window.location.href = 'list-template.html?name=' + data.name + '&code=' + data.id;
                     });

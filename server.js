@@ -63,7 +63,8 @@ app.post('/new-list.html', (req, res) => {
             List.replaceOne({ list_code: id }, list, { upsert: true })
                 .then(() => {
                     // If all goes well, respond with the new list
-                    res.status(200).send({ id: id, name: name });
+                    const dateTime = listHandler.getDateTimeShort();
+                    res.status(200).send({ id: id, name: name, dateTime: dateTime });
                 })
                 .catch(err => {
                     console.error(err)

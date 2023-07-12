@@ -145,8 +145,17 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const name = urlParams.get('name');
                 const code = urlParams.get('code');
-                let list = {};
+                // If the user has entered directly via URL, redirect them to
+                // enter their display name and password
+                window.onload = () => {
+                    if (document.referrer === "") {
+                        alert("You must enter your display name and password to access this page.");
+                        // If the user navigated to this page directly, redirect them to the home page
+                        window.location.href = `existing-list-getusername.html?code=${code}`;
+                    }
+                }
 
+                let list = {};
                 // Create a POST request using fetch to get the list
                 const params = { code: code };
                 const options = {

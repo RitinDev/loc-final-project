@@ -1,0 +1,14 @@
+name: Keep Website Alive
+
+on:
+  schedule:
+    # Runs every 10 minutes
+    - cron: '*/10 * * * *'
+
+jobs:
+  ping_website:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Ping Website
+      run: curl https://loc-final-project.onrender.com/
